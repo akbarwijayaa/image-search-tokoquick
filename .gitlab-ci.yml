@@ -1,0 +1,30 @@
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+stages:
+  - build
+  - deploy
+
+build job:
+  stage: build
+  environment: production
+  tags:
+   - ai-server
+  script:
+    - echo "Activate conda environment..."
+    - source /home/serverai/miniconda3/etc/profile.d/conda.sh
+    - conda activate image-search-tokoquick
+    - echo "Successfull Activate!"
+
+deploy job:
+  stage: deploy
+  environment: production
+  tags:
+   - ai-server
+  script:
+    - echo "Deploying application..."
+    - cd $APP_PATH
+    - git pull origin $CI_DEPLOY_BRANCH
+    - echo "Application successfully deployed."
+
